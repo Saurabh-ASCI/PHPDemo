@@ -182,6 +182,15 @@
         })
     }
 
+    function placeOrder(customer_id, product_id, quantity, city_id, status, date){
+        const formData = new FormData();
+        formData.append("type", "getProducts");
+        return fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+            method : 'POST',
+            body : formData
+        })
+    }
+
     function LoadProducts(){
         const productTableBody = customerNewOrder.querySelector('#productTable > #productTableBody');
         fetchProducts()
@@ -222,6 +231,17 @@
                 
                 console.log("Product : " + product_id);
                 console.log("Quantity : " + quantity);
+
+                const placeOrderFlag = window.confirm("Are you sure?");
+                if(placeOrderFlag){
+                    console.log("Placing order");
+                    
+                    //call place order api
+
+
+                }else{
+                    console.log("Cancelling order");
+                }
 
             }));
         })

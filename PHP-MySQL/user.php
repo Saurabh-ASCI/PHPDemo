@@ -13,7 +13,7 @@ if (!$conn) {
 
 $query = "";
 
-if(isset($_POST['type'])){
+if(isset($_POST['type']) && $_POST['type'] != "placeOrder"){
 
     if($_POST['type'] == "getUserInfo"){
 
@@ -58,6 +58,10 @@ if(isset($_POST['type'])){
         $res['error'] = "0 results";
         echo json_encode($res);
     }
+
+}else if($_POST['type'] == "placeOrder"){
+
+    echo json_encode($_POST);
 
 }else{
     $res['error'] = "Invalid data";
