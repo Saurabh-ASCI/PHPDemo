@@ -18,7 +18,7 @@ if(isset($_POST['type']) && $_POST['type'] != "placeOrder"){
     if($_POST['type'] == "getUserInfo"){
 
         if($_POST['user_type'] == "Customer"){
-            $query = "SELECT cust.id, cust.firstname, cust.lastname, c.name AS city, c1.name as country FROM customers cust LEFT JOIN city c ON cust.city_id = c.id left join country c1 on c.country_id=c1.id where cust.id=" . $_POST['user_id'];
+            $query = "SELECT cust.id, cust.firstname, cust.lastname, cust.city_id, c.name AS city, c1.name as country FROM customers cust LEFT JOIN city c ON cust.city_id = c.id left join country c1 on c.country_id=c1.id where cust.id=" . $_POST['user_id'];
         }else if($_POST['user_type'] == "Employee"){
             $query = "SELECT e.id, e.firstname, e.lastname, e.office_code, c.name AS city, c.state AS state, c1.name AS country FROM employees e LEFT JOIN office o ON e.office_code = o.id LEFT JOIN city c ON o.city_id = c.id LEFT JOIN country c1 ON c.country_id = c1.id where e.id=" . $_POST['user_id'];
         }else{
@@ -61,7 +61,16 @@ if(isset($_POST['type']) && $_POST['type'] != "placeOrder"){
 
 }else if($_POST['type'] == "placeOrder"){
 
-    echo json_encode($_POST);
+    $query = "INSERT INTO orders(`date`, `status`, `customer_id`, `product_id`, `city_id`, `quantity`) VALUES ('".date("Y/m/d")."','".$_POST['status']."','".$_POST['customer_id']."','".$_POST['product_id']."','".$_POST['city_id']."','".$_POST['quantity']."')";
+    // echo json_encode($_POST);
+    // echo $query;
+    if(mysqli_query($conn, $query)){
+        $res['result'] = "Order is placed";
+        echo json_encode($res);
+    }else{
+        $res['error'] = "Invalid data, unable to place order";
+        echo json_encode($res);
+    }
 
 }else{
     $res['error'] = "Invalid data";

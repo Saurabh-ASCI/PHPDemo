@@ -55,7 +55,7 @@
     <button class="btn btn-success" onclick="renderHome()">
         Go Home
     </button>
-    <button class="btn btn-danger" onclick="renderHome()">
+    <button class="btn btn-danger" onclick="LoadProducts()">
         Order Product
     </button>
 </div>
@@ -110,9 +110,6 @@
     <button class="btn btn-success" onclick="renderHome()">
         Go Home
     </button>
-    <button class="btn btn-danger" onclick="LoadProducts()">
-        Order Product
-    </button>
 </div>
 <script>
     const loginForm = document.querySelector("#loginForm");
@@ -122,11 +119,13 @@
     
     customerOrders.style.display = "none";
     allEmployeeDetails.style.display = "none";
-    // customerNewOrder.style.display = "none";
+    customerNewOrder.style.display = "none";
 
     const loginBtn = document.querySelector("#loginBtn");
     const user_type = document.querySelector("#user_type");
     const user_id = document.querySelector("#user_id");
+
+    let user_info = {};
 
     function validate(user_type, user_id){
         if(user_type && user_id){
@@ -147,8 +146,7 @@
     function renderHome(){
         customerOrders.style.display = "none";
         allEmployeeDetails.style.display = "none";
-    // customerNewOrder.style.display = "none";
-
+        customerNewOrder.style.display = "none";
         loginForm.style.display = "block";
         user_type.value = "";
         user_id.value = "";
@@ -158,7 +156,7 @@
         const formData = new FormData();
         formData.append("type", "getOrders");
         formData.append("customer_id", customer_id);
-        return fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+        return fetch("http://localhost/PHPDemo/PHP-MySQL/user.php", {
             method : 'POST',
             body : formData
         })
@@ -167,7 +165,7 @@
     function fetchEmployees(){
         const formData = new FormData();
         formData.append("type", "getEmployees");
-        return fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+        return fetch("http://localhost/PHPDemo/PHP-MySQL/user.php", {
             method : 'POST',
             body : formData
         })
@@ -176,13 +174,13 @@
     function fetchProducts(){
         const formData = new FormData();
         formData.append("type", "getProducts");
-        return fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+        return fetch("http://localhost/PHPDemo/PHP-MySQL/user.php", {
             method : 'POST',
             body : formData
         })
     }
 
-    function placeOrder(customer_id, product_id, quantity, city_id, status, date){
+    function placeOrder(customer_id, product_id, quantity, city_id, status){
         const formData = new FormData();
         formData.append("type", "placeOrder");
         formData.append("customer_id", customer_id);
@@ -190,14 +188,19 @@
         formData.append("quantity", quantity);
         formData.append("city_id", city_id);
         formData.append("status", status);
-        formData.append("date", date);
-        return fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+        return fetch("http://localhost/PHPDemo/PHP-MySQL/user.php", {
             method : 'POST',
             body : formData
         })
     }
 
     function LoadProducts(){
+        if(!user_info) return;
+        customerOrders.style.display = "none";
+        allEmployeeDetails.style.display = "none";
+        loginForm.style.display = "none";
+        customerNewOrder.style.display = "block";
+
         const productTableBody = customerNewOrder.querySelector('#productTable > #productTableBody');
         fetchProducts()
         .then(res => res.json())
@@ -242,10 +245,14 @@
                     console.log("Quantity : " + quantity);
                     //call place order api
                     
-                    placeOrder("1", product_id, quantity, "2", "in progress", "2018-07-13")
+                    placeOrder(user_info.id, product_id, quantity, user_info.city_id, "in progress")
                     .then(res => res.json())
                     .then(result1 => {
                         console.log(result1);
+                        if(result1.result === "Order is placed"){
+                            alert("Your order is placed");
+                            location.reload();
+                        }
                     })
 
                 }else{
@@ -265,7 +272,7 @@
             formData.append("type", "getUserInfo");
             formData.append("user_type", type);
             formData.append("user_id", id);
-            fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+            fetch("http://localhost/PHPDemo/PHP-MySQL/user.php", {
                 method : "POST",
                 body : formData
             }).then((response) => {
@@ -276,13 +283,16 @@
                 if(type == "Customer"){
                     loginForm.style.display = "none";
                     allEmployeeDetails.style.display = "none";
-                    // customerNewOrder.style.display = "none";
+                    customerNewOrder.style.display = "none";
                     customerOrders.style.display = "block";
                     
                     const header = customerOrders.querySelector('.jumbotron > h1');
                     const orderTableBody = customerOrders.querySelector('#orderTable > #orderTableBody');
 
                     header.innerHTML = "Hi, " + result[0].firstname + " " + result[0].lastname;
+
+                    user_info = Object.assign({}, result[0]);
+
                     const customer_id = result[0].id;
                     fetchOrders(customer_id)
                     .then((res) => res.json())
@@ -309,7 +319,7 @@
                 }else if(type == "Employee"){
                     loginForm.style.display = "none";
                     customerOrders.style.display = "none";
-                    // customerNewOrder.style.display = "none";
+                    customerNewOrder.style.display = "none";
                     allEmployeeDetails.style.display = "block";
                     
                     const header = allEmployeeDetails.querySelector('.jumbotron > h1');
@@ -367,9 +377,6 @@
 
                     })
 
-                    
-
-                    
 
                 }
 
