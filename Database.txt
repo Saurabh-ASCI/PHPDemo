@@ -1,0 +1,81 @@
+############################################################################################
+
+Database : 
+
+1. Database is a collection of information that is organized so that it can be easily accessed, managed and updated.
+2. Data organized into rows, columns and tables, and it is indexed to make it easy to find. Data gets updated, expanded and deleted. Databases provides "queries" to access that data.
+
+############################################################################################
+
+Relational Database :
+
+1. tabular database
+2. made up of set of tables with data that fits into predefined category
+3. Each table has at least one data category in column, and each row contains certain instance of data
+4. Structured Query Language (SQL) is API for Relational Database.
+5. Relational databases are easy to extend
+
+############################################################################################
+
+Distributed Database :
+
+1. It is a database in which portions of database are stored in multiple physical locations, in which processing is dispersed or replicated among network
+
+############################################################################################
+
+Cloud Database :
+
+1. A cloud database is a collection of content, either structured or unstructured, that resides on private, public or hybrid cloud
+
+Examples : 
+DBaas - Database as a service
+Amazon RDS
+
+############################################################################################
+
+NoSQL Database :
+
+1. NoSQL databases are effective for big data performance issues that relational databases aren't built to solve.
+2. Most effective in organization with large chunks of unstructured data
+
+############################################################################################
+
+Object-Oriented Database :
+
+1. It is a Database Management System where data is represented in form of objects, as used in Object-Oriented programming
+ Read more : https://database.guide/what-is-an-oodbms/
+
+
+############################################################################################
+
+Graph Database : 
+
+1. It is a type of NoSQL database that uses graph-theory to store, map and query relationships
+2. It is basically connection of node and edges
+3. Popular for analyzing interconnections
+
+############################################################################################
+
+DBMS : 
+
+1. Type of software that allows you to define, manipulate, retrieve and manage data stored within the database
+
+############################################################################################
+
+DBMS vs RDBMS : 
+
+1. Previously in DBMS supports hierarchical databases, in which data is organized in tree-like structure with parent and child records. but in 1970 RDBMS become most popular.
+2. In RDBMS data is organized in tabular format
+3. Microsoft SQL Server, Oracle Database, IBM DB2 and MySQL are the top RDBMS products available for enterprise users.
+4. DBMS can be of NoSQL, object-Oriented or Graph type
+5. RDBMS based on Relational model
+6. Concepts includes database normalization, primary keys and foreign keys to establish relation between rows of the data in different database tables
+
+Advantages of RDBMS :
+
+1. Table format is easy to understand
+2. Allows multi-user access
+3. Privilages - to user
+4. Network access - server daemon which is always listening for connect request
+that allows clients to connect to database
+5. Uses SQL as API which is standard and simple 

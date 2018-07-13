@@ -1,0 +1,48 @@
+1. REpresentational State Transfer
+2. Need - Previously every user's data maintained on server by means of session. (Session requires some memory to store). More users - More memory
+3. Solution - Maintaining the session state in the database and token is passed between client and server (also known as Database Sessions)
+4. Concept of REST is advancement in this solution
+5. Client remembers everything -> Passes this data to server when it needs to do some transactions -> Server process the request according to parameters -> Sends response to client.
+6. So in this case server does not need to remember anything about the client
+7. REST uses HTTP protocols
+8. GET, PUT, DELETE, POST
+9. Hypermedia Response => REST returns XML or JSON response
+10. Stateless => Does not maintain state on server
+    => Each request must contain all of the information needed to fulfill the request
+11. REST is an Architectural Style
+12. Increase in performance and scalability of application
+13. REST returns represenation of what lives at that URI in response-body
+
+##############################################################################
+
+GET - Safe (No side effects), Idempotent (Request can be made multiple times), Cacheable
+PUT - Idempotent
+DELETE - Idempotent
+HEAD - Safe, Idempotent
+POST - null
+
+##############################################################################
+
+Stateless means every request happens in complete isolation. When client makes HTTP request, it includes all information necessary to process the request.
+There are two kinds of state 
+A] Application State - maintained at client side and remembers of current application state
+B] Resource State - lives at server side
+Whenever client makes request, it must includes all the application states the server will need to process it.
+
+Cacheable -
+
+Your system (server + client + intermediate_devices like load balancers, proxy) all supports cache-ing. As we know GET request is cacheable, anywhere in the system cache is maintained and cahce-ing improves the performance of the system.
+
+What is API?
+
+- like restaurant menu, you call the item but you dont know the process but you get the desired result. More like fancy restaurant where you provide the raw materials and get food prepared
+- APIs save time of developer by taking advantage of a platform's implementation to do basic work. This helps reduce amount of code developers need to create. 
+- APIs can control access to hardware and software resources.
+
+
+################################################################################
+
+REST vs RESTful difference :
+
+1. REST -  it is an architectural style.
+2. RESTful - web-services that implements such style

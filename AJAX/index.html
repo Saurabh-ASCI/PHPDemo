@@ -1,0 +1,109 @@
+<html>
+<head>
+    <title>PHP - AJAX</title>
+</head>
+<body style="text-align: center; color: #2c3e50">
+    <h1>Search Names in Database</h1>
+    <hr/>
+    <input type="text" placeholder="type name here"/>
+    <input type="submit"/>
+    <h4>Suggestions :</h4> 
+    <div class="suggestions"></div>
+    <script>
+
+        const input = document.querySelector('[type="text"]');
+        const submit = document.querySelector('[type="submit"]');
+
+        input.style.fontSize = '20px';
+        input.style.borderRadius = "10px";
+        submit.style.borderRadius = "10px";
+        input.style.borderColor = "#2c3e50";
+        submit.style.borderColor = "#2c3e50";
+        submit.style.fontSize = "20px";
+        input.style.padding = "10px";
+        submit.style.padding = "10px";
+        const suggestions = document.querySelector('.suggestions');
+
+        input.addEventListener('keyup', (e) => {
+            // console.log(e.target.value);
+            let value = e.target.value.trim();
+            if(value){
+                fetch('./search.php?search='+value)
+                .then(res => res.json())
+                .then(result => {
+                    SetSugestions(result);             
+                });
+            }else{
+                console.log("NULL INPUT");
+                suggestions.innerHTML= "no match";
+            }
+        });
+        
+        function SetSugestions(result){
+            let suggestion_array = [];
+            // console.table(result);
+            const keys = Object.keys(result);
+            if(keys.length == 0) {
+                suggestions.innerHTML= "no match";
+            }else{
+                keys.map(e => { 
+                    suggestion_array.push(result[e]);
+                });
+
+                if(suggestion_array.length > 0){
+                    suggestions.innerHTML = suggestion_array.join(', ');
+                }else{
+                    suggestions.innerHTML= "no match";
+                }
+            }
+        }
+
+        submit.addEventListener('click', (e) => {
+            // console.log(e);
+            console.log(input.value);
+            // let data = {'name' : input.value};
+            let data = new FormData();
+            data.append('username', input.value);
+            data.append('password', input.value);
+            
+            fetch('post_test.php', {
+                method : 'POST',
+                headers: {
+                    // 'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                    // "Content-Type": "application/x-www-form-urlencoded",
+                },
+                // body : 'username=saurabh&password=test'
+                body : JSON.stringify({
+                    'username' : input.value,
+                    'password' : input.value
+                })
+            })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result);
+            })
+
+            //another API
+            // fetch('http://localhost:8080/login', {
+            //     method : 'POST',
+            //     headers: {
+            //         'Accept': 'application/json, text/plain, */*',
+            //         'Content-Type': 'application/json'
+            //         // "Content-Type": "application/x-www-form-urlencoded",
+            //     },
+            //     body : JSON.stringify({
+            //         'username' : input.value,
+            //         'password' : input.value
+            //     })
+            // })
+            // .then(res => res.json())
+            // .then(result => {
+            //     console.log(result);
+            // })
+
+        })
+
+    </script>
+</body>
+</html>

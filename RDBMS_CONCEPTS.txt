@@ -1,0 +1,63 @@
+Table : 
+
+    in RDBMS data is stored in form of tables
+    
+    Example - 
+    +----+----------+-----+-----------+----------+
+    | ID | NAME     | AGE | ADDRESS   | SALARY   |
+    +----+----------+-----+-----------+----------+
+    |  1 | Ramesh   |  32 | Ahmedabad |  2000.00 |
+    |  2 | Khilan   |  25 | Delhi     |  1500.00 |
+    |  3 | kaushik  |  23 | Kota      |  2000.00 |
+    |  4 | Chaitali |  25 | Mumbai    |  6500.00 |
+    |  5 | Hardik   |  27 | Bhopal    |  8500.00 |
+    |  6 | Komal    |  22 | MP        |  4500.00 |
+    |  7 | Muffy    |  24 | Indore    | 10000.00 |
+    +----+----------+-----+-----------+----------+
+
+Fields :
+
+    Every table is broken up into smaller entities called Fields
+    
+    Example - fields are ID, NAME, AGE, ADDRESS, SALARY
+
+Record or Row : 
+
+    Individual entry that exists in table. 
+    Horizontal entity in the table
+    Represents small instance of table
+
+    Example - 
+    +----+----------+-----+-----------+----------+
+    |  1 | Ramesh   |  32 | Ahmedabad |  2000.00 |
+    +----+----------+-----+-----------+----------+
+
+Column : 
+
+    Vertical entity in the table
+    Contains all the information of the table for a specific field
+    
+    Example - 
+    +-----------+
+    | ADDRESS   |
+    +-----------+
+    | Ahmedabad |
+    | Delhi     |
+    | Kota      |
+    | Mumbai    |
+    | Bhopal    |
+    | MP        |
+    | Indore    |
+    +-----------+
+
+NULL value :
+    
+    field with NULL value means field with no value
+    NULL value is different than 0 value
+    also means blank field
+
+
+KEYS :
+ 
+https://www.codeproject.com/Answers/1030487/Difference-between-primary-key-candidate-key-and-s#answer5
+

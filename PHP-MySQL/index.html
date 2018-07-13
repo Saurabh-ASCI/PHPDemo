@@ -1,0 +1,355 @@
+<html>
+<head>
+    <title>
+        PHP-MySQL
+    </title>    
+</head>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+
+<style>
+.jumbotron{
+    padding: 25px;
+}
+</style>
+
+<body>
+<div class="container" id="loginForm">
+    <div class="jumbotron">
+        <h1 align="center">LOGIN</h1>
+    </div>
+    <div class="col-sm-6" style="margin: 0 auto">
+        <label for="user_type">User Type : </label>
+        <select id="user_type"class="form-control">
+            <option value="">Please select user type</option>
+            <option value="Customer">Customer</option>
+            <option value="Employee">Employee</option>
+        </select>
+        <label for="user_id">User ID : </label>
+        <input type="text" id="user_id" class="form-control" placeholder="enter user id here"/>
+        <hr/>
+        <button id="loginBtn" class="btn btn-success btn-block">LOGIN</button>
+    </div>
+</div>
+<!-- Customer Orders -->
+<div class="container" id="customerOrders">
+    <div class="jumbotron">
+        <h1 align="center">Customer Orders</h1>
+    </div>
+    <div class="col-sm-6" style="margin: 0 auto">
+        <table id="orderTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+
+            </tbody>
+        </table>    
+    </div>
+    <button class="btn btn-success" onclick="renderHome()">
+        Go Home
+    </button>
+    <button class="btn btn-danger" onclick="renderHome()">
+        Order Product
+    </button>
+</div>
+<!-- All Employees -->
+<div class="container" id="allEmployeeDetails">
+    <div class="jumbotron">
+        <h1 align="center">All Employee Data</h1>
+    </div>
+    <div class="col-sm-6" style="margin: 0 auto">
+        <table id="employeeTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Office Code</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+
+            </tbody>
+        </table>
+    </div>
+    <button class="btn btn-success" onclick="renderHome()">
+        Go Home
+    </button>
+</div>
+<!-- Place Order -->
+<div class="container" id="customerNewOrder">
+    <div class="jumbotron">
+        <h1 align="center">Products</h1>
+    </div>
+    <div class="col-sm-6" style="margin: 0 auto">
+        <table id="productTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody id="productTableBody">
+
+            </tbody>
+        </table>    
+    </div>
+    <button class="btn btn-success" onclick="renderHome()">
+        Go Home
+    </button>
+    <button class="btn btn-danger" onclick="LoadProducts()">
+        Order Product
+    </button>
+</div>
+<script>
+    const loginForm = document.querySelector("#loginForm");
+    const customerOrders = document.querySelector("#customerOrders");
+    const allEmployeeDetails = document.querySelector("#allEmployeeDetails");
+    const customerNewOrder = document.querySelector("#customerNewOrder");
+    
+    customerOrders.style.display = "none";
+    allEmployeeDetails.style.display = "none";
+    // customerNewOrder.style.display = "none";
+
+    const loginBtn = document.querySelector("#loginBtn");
+    const user_type = document.querySelector("#user_type");
+    const user_id = document.querySelector("#user_id");
+
+    function validate(user_type, user_id){
+        if(user_type && user_id){
+            if(user_type === "Customer" || user_type === "Employee"){
+                if(!isNaN(user_id)){
+                    return true;
+                }else{  
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    function renderHome(){
+        customerOrders.style.display = "none";
+        allEmployeeDetails.style.display = "none";
+    // customerNewOrder.style.display = "none";
+
+        loginForm.style.display = "block";
+        user_type.value = "";
+        user_id.value = "";
+    }
+
+    function fetchOrders(customer_id){
+        const formData = new FormData();
+        formData.append("type", "getOrders");
+        formData.append("customer_id", customer_id);
+        return fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+            method : 'POST',
+            body : formData
+        })
+    }
+
+    function fetchEmployees(){
+        const formData = new FormData();
+        formData.append("type", "getEmployees");
+        return fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+            method : 'POST',
+            body : formData
+        })
+    }
+
+    function fetchProducts(){
+        const formData = new FormData();
+        formData.append("type", "getProducts");
+        return fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+            method : 'POST',
+            body : formData
+        })
+    }
+
+    function LoadProducts(){
+        const productTableBody = customerNewOrder.querySelector('#productTable > #productTableBody');
+        fetchProducts()
+        .then(res => res.json())
+        .then(result => {
+            console.log(result);
+            if(!Array.isArray(result)){
+                productTableBody.innerHTML = "";
+                return;
+            }
+            productTableBody.innerHTML = result.map((element, index) => {
+                return `
+                    <tr>
+                        <td>${element.id}</td>    
+                        <td>${element.name}</td>    
+                        <td>${element.price}</td>    
+                        <td>
+                            <input data-product-id="${element.id}" type="number" class="form-control" value="1"/>
+                        </td>
+                        <td>
+                            <button data-order-btn="${element.id}" class="btn btn-warning"> Order Now </button>
+                        </td>
+                    </tr>
+                `
+            }).join(" ");
+
+            const all_input = productTableBody.querySelectorAll('input');
+            const all_buttons = productTableBody.querySelectorAll('button');
+            all_buttons.forEach(button => button.addEventListener('click', (e) => {
+                const orderBtn = e.target;
+                let quantity = 1;
+                const product_id = orderBtn.dataset.orderBtn;
+                all_input.forEach(i => {
+                    if(i.dataset.productId === product_id){
+                        quantity = i.value
+                    }
+                });
+                
+                console.log("Product : " + product_id);
+                console.log("Quantity : " + quantity);
+
+            }));
+        })
+    }
+
+    loginBtn.addEventListener('click', (e)=>{
+        const type = user_type.value;
+        const id = user_id.value;
+        if(validate(type, id)){
+            console.log("Valid");
+            const formData = new FormData();
+            formData.append("type", "getUserInfo");
+            formData.append("user_type", type);
+            formData.append("user_id", id);
+            fetch("http://localhost/PHP/PHP-MySQL/user.php", {
+                method : "POST",
+                body : formData
+            }).then((response) => {
+                return response.json();
+            }).then(result => {
+                console.log(result[0]);
+
+                if(type == "Customer"){
+                    loginForm.style.display = "none";
+                    allEmployeeDetails.style.display = "none";
+                    // customerNewOrder.style.display = "none";
+                    customerOrders.style.display = "block";
+                    
+                    const header = customerOrders.querySelector('.jumbotron > h1');
+                    const orderTableBody = customerOrders.querySelector('#orderTable > #orderTableBody');
+
+                    header.innerHTML = "Hi, " + result[0].firstname + " " + result[0].lastname;
+                    const customer_id = result[0].id;
+                    fetchOrders(customer_id)
+                    .then((res) => res.json())
+                    .then(result1 => {
+                        console.log(result1);
+                        if(!Array.isArray(result1)){
+                            orderTableBody.innerHTML = "";
+                            return;
+                        }
+                        orderTableBody.innerHTML = result1.map((element, index) => {
+                            return `
+                                <tr>
+                                    <td>${element.order_id}</td>    
+                                    <td>${element.id}</td>    
+                                    <td>${element.name}</td>    
+                                    <td>${element.price}</td>    
+                                    <td>${element.quantity}</td>    
+                                    <td>${element.total_price}</td>    
+                                </tr>
+                            `
+                        }).join(" ");
+                    });
+
+                }else if(type == "Employee"){
+                    loginForm.style.display = "none";
+                    customerOrders.style.display = "none";
+                    // customerNewOrder.style.display = "none";
+                    allEmployeeDetails.style.display = "block";
+                    
+                    const header = allEmployeeDetails.querySelector('.jumbotron > h1');
+                    const employeeTableBody = allEmployeeDetails.querySelector('#employeeTable > #employeeTableBody');
+
+                    header.innerHTML = "Hi, " + result[0].firstname + " " + result[0].lastname;
+
+                    fetchEmployees()
+                    .then(res => res.json())
+                    .then(result1 => {
+                        console.log(result1);
+                        if(!Array.isArray(result1)){
+                            employeeTableBody.innerHTML = "";
+                            return;
+                        }
+                        employeeTableBody.innerHTML = result1.map((element, index) => {
+                            if((result[0].office_code === element.office_code) && result[0].id !== element.id) {
+                                return `
+                                    <tr style="background: #ffbe76">
+                                        <td>${element.id}</td>    
+                                        <td>${element.firstname}</td>    
+                                        <td>${element.lastname}</td>    
+                                        <td>${element.office_code}</td>    
+                                        <td>${element.city}</td>    
+                                        <td>${element.state}</td>    
+                                        <td>${element.country}</td>    
+                                    </tr>
+                                `
+                            }else if((result[0].office_code === element.office_code) && (result[0].id === element.id)){
+                                return `
+                                    <tr style="background: #ff7979">
+                                        <td>${element.id}</td>    
+                                        <td>${element.firstname}</td>    
+                                        <td>${element.lastname}</td>    
+                                        <td>${element.office_code}</td>    
+                                        <td>${element.city}</td>    
+                                        <td>${element.state}</td>    
+                                        <td>${element.country}</td>    
+                                    </tr>
+                                `
+                            }else{
+                                return `
+                                    <tr style="background: #dff9fb">
+                                        <td>${element.id}</td>    
+                                        <td>${element.firstname}</td>    
+                                        <td>${element.lastname}</td>    
+                                        <td>${element.office_code}</td>    
+                                        <td>${element.city}</td>    
+                                        <td>${element.state}</td>    
+                                        <td>${element.country}</td>    
+                                    </tr>
+                                `
+                            }
+                        }).join(" ");
+
+                    })
+
+                    
+
+                    
+
+                }
+
+            });
+
+        }else{
+            alert('Please enter valid data');
+        }
+    });
+</script>
+</body>
+</html>

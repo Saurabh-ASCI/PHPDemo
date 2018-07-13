@@ -1,0 +1,103 @@
+############################################################################################
+
+SQL Overview : 
+
+1. Query Dispatcher
+2. Optimization Engine
+3. Classic Query Engine - handles non-SQL queries
+4. SQL Query Engine - handles SQL queries but won't handle logical files
+
+DDL Commands : 
+ - CREATE - create new table, view or other object in database
+ - ALTER - modifies an existing database object, such as a table
+ - DROP - deletes entire table, a view of table or other objects in the table
+
+DML Commands :
+ - SELECT - retrive data from one or more tables
+ - INSERT, UPDATE, DELETE
+
+DCL Commands : 
+ - GRANT - give access to user
+ - REVOKE - takes back access from user
+
+Constraints :  
+    1. not null
+    2. unique (NULL value allowed only once in SQL server while in MySQL multiple NULL is allowed for UNIQUE)
+    3. primary keys (NULL value is not allowed)
+    4. foreign keys
+    5. index
+    6. check - check constraint ensures that all values in a column satify certain conditions
+
+    CHECK constraint example : 
+
+        CREATE TABLE IF NOT EXISTS newbook_mast
+        ( book_id	varchar(15) NOT NULL UNIQUE, 
+        book_name varchar(50) , 
+        isbn_no varchar(15) NOT NULL UNIQUE ,
+        cate_id varchar(8) , 
+        aut_id varchar(8) , 
+        pub_id varchar(8) ,
+        dt_of_pub date CHECK (dt_of_pub LIKE '--/--/----'), 
+        pub_lang varchar(15) ,
+        no_page decimal(5,0) CHECK(no_page>0) ,
+        book_price decimal(8,2) ,
+        PRIMARY KEY (book_id) );
+
+    Note : Check constraint do not work in MySQL. You have to use trigger.
+
+    7. default
+
+Data Integrity : 
+    1. Entity integrity - no duplicate entry
+    2. Domain integrity - validation for specific type, length, format
+    3. Referential integrity - reference key integrity on delete restrict/cascade
+    4. User-defined integrity - User defined business logic
+
+Normalization : 
+    process of efficiently organizing data in a database
+    
+    1. 1NF - remove duplicate entry
+    2. 2NF - must in 1NF and no partial dependencies of primary key
+    3. 3NF - must in 3NF and all non-primary fields are dependent on primary key
+
+Data types : 
+
+1. DOUBLE vs FLOAT vs DECIMAL
+    all have same (M,D)
+    FLOAT - default is (10,2)
+    DOUBLE - default is (16,4)
+    DECIMAL - no default, M and D are required
+
+2. DATE - YYYY-MM-DD format
+3. DATETIME - YYYY-MM-DD HH:MM:SS format
+4. TIMESTAMP - YYYYMMDDHHMMSS format
+5. TIME - HH:MM:SS format
+6. YEAR - store 2 digit (18) or 4 digit (2018). 
+            between 1970 to 2069 (70-69)
+            default length is 4
+7. CHAR(M) - fixed length string, it will occupy same byte space if you insert string less that defined space.
+8. VARCHAR(M) - variable length string
+9.BLOB or TEXT -
+    both used to store large amount data
+    TEXT - to store large TEXT. Case Sensitive
+    BLOB - to save binary large objects like images and other files. Case Insensitive
+
+Collation - 
+
+    Collation means encoding - representing chararcter with integer. and character is compared on basis on its encoding.
+
+    Because of encoding - utf8_general_ci
+        select * from table where lastname="saurabh" it is Case-Insensitive.
+    If you want to case sensitive search
+        Use BINARY keyword - 
+        Example - select * from table where title like BINARY "%good%"; //will fetch records with case sensitive match.
+
+ORDER BY with CASE : 
+
+    https://stackoverflow.com/questions/4346823/mysql-order-by-case-issue
+
+############################################################################################
+
+MySQL functions : 
+
+    https://www.w3schools.com/sql/sql_ref_mysql.asp
