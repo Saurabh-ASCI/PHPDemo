@@ -1,4 +1,12 @@
 <?php
+
+// required headers
+
+//for cors
+header("Access-Control-Allow-Origin: *");
+//for client side to understand that server is sending json response
+header("Content-Type: application/json; charset=UTF-8");
+
 $servername = "localhost";
 $username = "root";
 $password = "root";
@@ -13,7 +21,7 @@ if (!$conn) {
 
 $query = "";
 
-if(isset($_POST['type']) && $_POST['type'] != "placeOrder"){
+if(isset($_POST['type']) && $_POST['type'] != "placeOrder" && $_POST['type'] != "updateEmployee" && $_POST['type'] != 'deleteEmployee'){
 
     if($_POST['type'] == "getUserInfo"){
 
@@ -29,7 +37,7 @@ if(isset($_POST['type']) && $_POST['type'] != "placeOrder"){
     }else if($_POST['type'] == "getOrders"){
         
         if($_POST['customer_id']){
-            $query = "SELECT o.id AS order_id, p.*, o.quantity as quantity, (o.quantity * p.price) total_price FROM orders o LEFT JOIN products p ON o.product_id = p.id where o.customer_id=" . $_POST['customer_id'];
+            $query = "SELECT o.id AS order_id, p.*, o.quantity AS quantity, (o.quantity * p.price) total_price, c.name city, c.state state, c1.name country FROM orders o LEFT JOIN products p ON o.product_id = p.id LEFT JOIN city c ON c.id = o.city_id LEFT JOIN country c1 ON c1.id = c.country_id where o.customer_id=" . $_POST['customer_id'];
         }else{
             $res['error'] = "Invalid data";
             echo json_encode($res);
@@ -70,6 +78,28 @@ if(isset($_POST['type']) && $_POST['type'] != "placeOrder"){
     }else{
         $res['error'] = "Invalid data, unable to place order";
         echo json_encode($res);
+    }
+
+}else if($_POST['type'] == "updateEmployee"){
+
+    $query = "UPDATE `employees` SET `firstname`='".$_POST['firstname']."',`lastname`='".$_POST['lastname']."' WHERE `id`=".$_POST['id'];
+
+    if(mysqli_query($conn, $query)){
+        $res['result'] = "Employee is updated";
+        echo json_encode($res);
+    }else{
+        $res['error'] = "Invalid data, unable to update employee";
+        echo json_encode($res);
+    }
+
+}else if($_POST['type'] == 'deleteEmployee'){
+
+    $query = "DELETE FROM `employees` WHERE `id`=" . $_POST['id'];
+
+    if(mysqli_query($conn, $query)){
+        echo json_encode(array('result' => 'Employee Deleted'));
+    }else{
+        echo json_encode(array('error' => 'Invalid data, Unable to delete employee'));
     }
 
 }else{

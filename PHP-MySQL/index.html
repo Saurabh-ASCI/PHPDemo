@@ -49,6 +49,7 @@ thead{
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Total Price</th>
+                    <th>Delivery_Address</th>
                 </tr>
             </thead>
             <tbody id="orderTableBody">
@@ -79,6 +80,7 @@ thead{
                     <th>City</th>
                     <th>State</th>
                     <th>Country</th>
+                    <th>Options</th>
                 </tr>
             </thead>
             <tbody id="employeeTableBody">
@@ -86,6 +88,20 @@ thead{
             </tbody>
         </table>
     </div>
+
+    <!-- Employee Update form -->
+    <div class="card">
+        <div class="card-body">
+            <h4>Update your details:</h4>
+            <label for="employeeFirstname">Firstname : </label>
+            <input type="text" id="employeeFirstname" class="form-control" />
+            <label for="employeeLastname">Lastname : </label>
+            <input type="text" id="employeeLastname" class="form-control"/>
+            <br/>
+            <button id="updateEmployeeBtn" class="btn btn-danger"> Update </button>
+        </div>
+    </div>
+    <hr/>
     <button class="btn btn-success" onclick="renderHome()">
         Go Home
     </button>
@@ -148,12 +164,13 @@ thead{
     }
 
     function renderHome(){
-        customerOrders.style.display = "none";
-        allEmployeeDetails.style.display = "none";
-        customerNewOrder.style.display = "none";
-        loginForm.style.display = "block";
-        user_type.value = "";
-        user_id.value = "";
+        // customerOrders.style.display = "none";
+        // allEmployeeDetails.style.display = "none";
+        // customerNewOrder.style.display = "none";
+        // loginForm.style.display = "block";
+        // user_type.value = "";
+        // user_id.value = "";
+        location.reload();
     }
 
     function fetchOrders(customer_id){
@@ -284,6 +301,8 @@ thead{
             }).then(result => {
                 console.log(result[0]);
 
+                if(result.hasOwnProperty('error')) return;
+
                 if(type == "Customer"){
                     loginForm.style.display = "none";
                     allEmployeeDetails.style.display = "none";
@@ -315,6 +334,7 @@ thead{
                                     <td>${element.price}</td>    
                                     <td>${element.quantity}</td>    
                                     <td>${element.total_price}</td>    
+                                    <td>${element.city}, ${element.state}, ${element.country}</td>    
                                 </tr>
                             `
                         }).join(" ");
@@ -331,6 +351,44 @@ thead{
 
                     header.innerHTML = "Hi, " + result[0].firstname + " " + result[0].lastname;
 
+                    // Update form
+                    const updateFirstname = allEmployeeDetails.querySelector('#employeeFirstname');
+                    const updateLastname = allEmployeeDetails.querySelector('#employeeLastname');
+                    
+                    const updateEmployeeBtn = allEmployeeDetails.querySelector('#updateEmployeeBtn');
+
+                    updateFirstname.value = result[0].firstname;
+                    updateLastname.value = result[0].lastname;
+                    
+                    updateEmployeeBtn.addEventListener('click', (e) => {
+                        const fname = updateFirstname.value;
+                        const lname = updateLastname.value;
+                        if(fname && lname){
+                            console.log("Updating employee data");
+                            const updateFormData = new FormData();
+                            updateFormData.append('type', 'updateEmployee');
+                            updateFormData.append('firstname', fname);
+                            updateFormData.append('lastname', lname);
+                            updateFormData.append('id', result[0].id);
+
+                            fetch('http://localhost/PHPDemo/PHP-MySQL/user.php', {
+                                method : 'POST',
+                                body : updateFormData
+                            })
+                            .then(res => res.json())
+                            .then(updateResult => {
+                                console.log(updateResult);
+                                if(updateResult.hasOwnProperty('result')){
+                                    alert(updateResult.result);
+                                    location.reload();
+                                }else if(updateResult.hasOwnProperty('error')){
+                                    alert(updateResult.error);
+                                }
+                            })
+                        }
+                    });
+
+
                     fetchEmployees()
                     .then(res => res.json())
                     .then(result1 => {
@@ -340,47 +398,132 @@ thead{
                             return;
                         }
                         employeeTableBody.innerHTML = result1.map((element, index) => {
-                            if((result[0].office_code === element.office_code) && result[0].id !== element.id) {
-                                return `
-                                    <tr style="background: #ffbe76">
-                                        <td>${element.id}</td>    
-                                        <td>${element.firstname}</td>    
-                                        <td>${element.lastname}</td>    
-                                        <td>${element.office_code}</td>    
-                                        <td>${element.city}</td>    
-                                        <td>${element.state}</td>    
-                                        <td>${element.country}</td>    
-                                    </tr>
-                                `
-                            }else if((result[0].office_code === element.office_code) && (result[0].id === element.id)){
-                                return `
-                                    <tr style="background: #ff7979">
-                                        <td>${element.id}</td>    
-                                        <td>${element.firstname}</td>    
-                                        <td>${element.lastname}</td>    
-                                        <td>${element.office_code}</td>    
-                                        <td>${element.city}</td>    
-                                        <td>${element.state}</td>    
-                                        <td>${element.country}</td>    
-                                    </tr>
-                                `
+                            if(element.id != 1 && result[0].id == 1){
+                                if((result[0].office_code === element.office_code) && result[0].id !== element.id) {
+                                    return `
+                                        <tr style="background: #ffbe76">
+                                            <td>${element.id}</td>    
+                                            <td>${element.firstname}</td>    
+                                            <td>${element.lastname}</td>    
+                                            <td>${element.office_code}</td>    
+                                            <td>${element.city}</td>    
+                                            <td>${element.state}</td>    
+                                            <td>${element.country}</td>    
+                                            <td>
+                                                <button class="btn btn-warning" id="deleteEmployeeBtn" data-id="${element.id}">x</button>
+                                            </td>    
+                                        </tr>
+                                    `
+                                }else if((result[0].office_code === element.office_code) && (result[0].id === element.id)){
+                                    return `
+                                        <tr style="background: #ff7979">
+                                            <td>${element.id}</td>    
+                                            <td>${element.firstname}</td>    
+                                            <td>${element.lastname}</td>    
+                                            <td>${element.office_code}</td>    
+                                            <td>${element.city}</td>    
+                                            <td>${element.state}</td>    
+                                            <td>${element.country}</td>
+                                            <td>
+                                                <button class="btn btn-warning" id="deleteEmployeeBtn" data-id="${element.id}">x</button>
+                                            </td>
+                                        </tr>
+                                    `
+                                }else{
+                                    return `
+                                        <tr style="background: #ecf0f1">
+                                            <td>${element.id}</td>    
+                                            <td>${element.firstname}</td>    
+                                            <td>${element.lastname}</td>    
+                                            <td>${element.office_code}</td>    
+                                            <td>${element.city}</td>    
+                                            <td>${element.state}</td>    
+                                            <td>${element.country}</td>
+                                            <td>
+                                                <button class="btn btn-warning" id="deleteEmployeeBtn" data-id="${element.id}">x</button>
+                                            </td>   
+                                        </tr>
+                                    `
+                                }
                             }else{
-                                return `
-                                    <tr style="background: #ecf0f1">
-                                        <td>${element.id}</td>    
-                                        <td>${element.firstname}</td>    
-                                        <td>${element.lastname}</td>    
-                                        <td>${element.office_code}</td>    
-                                        <td>${element.city}</td>    
-                                        <td>${element.state}</td>    
-                                        <td>${element.country}</td>    
-                                    </tr>
-                                `
+                                if((result[0].office_code === element.office_code) && result[0].id !== element.id) {
+                                    return `
+                                        <tr style="background: #ffbe76">
+                                            <td>${element.id}</td>    
+                                            <td>${element.firstname}</td>    
+                                            <td>${element.lastname}</td>    
+                                            <td>${element.office_code}</td>    
+                                            <td>${element.city}</td>    
+                                            <td>${element.state}</td>    
+                                            <td>${element.country}</td>   
+                                            <td></td> 
+                                        </tr>
+                                    `
+                                }else if((result[0].office_code === element.office_code) && (result[0].id === element.id)){
+                                    return `
+                                        <tr style="background: #ff7979">
+                                            <td>${element.id}</td>    
+                                            <td>${element.firstname}</td>    
+                                            <td>${element.lastname}</td>    
+                                            <td>${element.office_code}</td>    
+                                            <td>${element.city}</td>    
+                                            <td>${element.state}</td>    
+                                            <td>${element.country}</td>   
+                                            <td></td> 
+                                        </tr>
+                                    `
+                                }else{
+                                    return `
+                                        <tr style="background: #ecf0f1">
+                                            <td>${element.id}</td>    
+                                            <td>${element.firstname}</td>    
+                                            <td>${element.lastname}</td>    
+                                            <td>${element.office_code}</td>    
+                                            <td>${element.city}</td>    
+                                            <td>${element.state}</td>    
+                                            <td>${element.country}</td>    
+                                            <td></td> 
+                                        </tr>
+                                    `
+                                }
                             }
                         }).join(" ");
+                        
+
+                        //to delete employee
+                        if(result[0].id == 1){
+
+                            const all_delete_btns = employeeTableBody.querySelectorAll("#deleteEmployeeBtn");
+
+                            // console.log(all_delete_btns);
+                            all_delete_btns.forEach(btn => btn.addEventListener('click', (e) => {
+                                const delete_id = e.target.dataset.id;
+                                const deleteConfirm = window.confirm("Are you sure you want to delete this employee record?");
+                                if(!deleteConfirm){
+                                    console.log("Cancel delete employee operation");
+                                    return;
+                                }
+                                const deleteFormData = new FormData();
+                                deleteFormData.append('type', 'deleteEmployee');
+                                deleteFormData.append('id', delete_id);
+                                fetch('http://localhost/PHPDemo/PHP-MySQL/user.php', {
+                                    method : 'POST',
+                                    body : deleteFormData
+                                })
+                                .then(res => res.json())
+                                .then(delete_res => {
+                                    if(delete_res.hasOwnProperty('result')){
+                                        alert(delete_res.result);
+                                        location.reload();
+                                    }else if(delete_res.hasOwnProperty('error')){
+                                        alert(delete_res.error);
+                                    }
+                                })
+                            }))
+
+                        }
 
                     })
-
 
                 }
 
