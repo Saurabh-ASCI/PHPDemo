@@ -44,9 +44,12 @@
 
 	echo "<hr/>";
 	$cursor = $collection->find();
-	foreach ($cursor as $doc) {
-		echo  $doc['_id'] . " | " . $doc['firstname'] . " | " . $doc['lastname'] . "<br/>";
-	}
+	// foreach ($cursor as $doc) {
+	// 	echo  $doc['_id'] . " | " . $doc['firstname'] . " | " . $doc['lastname'] . "<br/>";
+	// }
+	array_map(function($e){
+		echo $e['_id'] . " " . $e['firstname'] . " " .$e['lastname'] . '<br/>';
+	}, $cursor->toArray());
 	echo "<hr/>";
 
 	// phpinfo();
@@ -68,6 +71,19 @@
 					 https://docs.mongodb.com/php-library/current/reference/method/MongoDBCollection-findOne/
 
 	2. Note that $set in updateOne() is enclosed with single quotes ('). If you use double quotes (") it will throw error that set is defined variable in PHP. Single-quotes makes it part of db query and Double-quotes makes it part of PHP variable.
+
+	3. Installation : 
+		
+		a. Install phpize for current php version
+		b. Install PHP + Mongodb library 
+			$> sudo pecl install mongodb
+		c. Install 
+			$> composer require mongodb/mongodb
+		d. include vendor/autoload.php file in your project
+		e. $client = new MongoDB\Client("mongodb://localhost:27017");
+			$collection = $client->db->collection;
+			
+
 
 	*/
 
